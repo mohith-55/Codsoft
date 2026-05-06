@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodSoft Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1e2e6e;
+    --red: #c0392b;
+    --green: #27ae60;
+    --light-bg: #f4f6fb;
+    --border: #e2e6f0;
+    --text: #333;
+    --muted: #777;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Poppins', sans-serif; background: var(--light-bg); color: var(--text); min-height: 100vh; }
+
+  /* TOP BAR */
+  .topbar {
+    background: var(--navy); padding: 14px 36px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .topbar-logo { display: flex; align-items: center; gap: 10px; }
+  .logo-ring {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: conic-gradient(#c0392b 0deg, #2980b9 120deg, #8e44ad 240deg, #c0392b 360deg);
+    display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0;
+  }
+  .logo-ring::before { content:''; position:absolute; width:26px; height:26px; border-radius:50%; border:2px solid rgba(255,255,255,0.5); }
+  .logo-ring::after { content:''; position:absolute; width:10px; height:10px; background:#fff; border-radius:50%; }
+  .topbar-logo h2 { font-size: 1.1rem; font-weight: 700; color: #fff; }
+  .topbar-logo span { font-size: 0.65rem; color: rgba(255,255,255,0.65); }
+  .topbar-right { display: flex; align-items: center; gap: 14px; }
+  .topbar-user { color: rgba(255,255,255,0.85); font-size: 0.83rem; }
+  .btn-logout { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.25); padding: 7px 18px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-family: 'Poppins', sans-serif; font-weight: 600; transition: all 0.2s; }
+  .btn-logout:hover { background: rgba(255,255,255,0.22); }
+  .btn-home { background: transparent; color: rgba(255,255,255,0.75); border: none; cursor: pointer; font-size: 0.8rem; font-family: 'Poppins', sans-serif; text-decoration: none; transition: color 0.2s; }
+  .btn-home:hover { color: #fff; }
+
+  /* LOGIN */
+  #loginWrap {
+    display: flex; align-items: center; justify-content: center;
+    min-height: calc(100vh - 67px); padding: 40px 20px;
+  }
+  .login-card {
+    background: #fff; border-radius: 16px; padding: 46px 40px;
+    width: 420px; max-width: 100%;
+    box-shadow: 0 8px 40px rgba(30,46,110,0.12);
+    border: 1px solid var(--border);
+  }
+  .login-card .lock-icon { font-size: 2.4rem; margin-bottom: 18px; }
+  .login-card h2 { font-size: 1.4rem; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+  .login-card p { font-size: 0.82rem; color: var(--muted); margin-bottom: 28px; }
+  .form-group { margin-bottom: 18px; }
+  .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 7px; }
+  .form-group input {
+    width: 100%; padding: 12px 15px; border: 1.5px solid #d0d5e8;
+    border-radius: 8px; font-size: 0.87rem; outline: none;
+    font-family: 'Poppins', sans-serif; transition: border-color 0.2s; background: #fafbff;
+  }
+  .form-group input:focus { border-color: var(--navy); background: #fff; }
+  .btn-login {
+    width: 100%; background: var(--navy); color: #fff; border: none;
+    padding: 13px; border-radius: 8px; font-size: 0.9rem; font-weight: 600;
+    cursor: pointer; font-family: 'Poppins', sans-serif; margin-top: 4px;
+    transition: background 0.2s; letter-spacing: 0.3px;
+  }
+  .btn-login:hover { background: #16235a; }
+  .btn-login:disabled { background: #8898c4; cursor: not-allowed; }
+
+  /* PANEL */
+  #panelWrap { display: none; padding: 36px 40px; max-width: 1100px; margin: 0 auto; }
+  .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .panel-header h2 { font-size: 1.5rem; font-weight: 700; color: var(--navy); }
+  .panel-sub { font-size: 0.83rem; color: var(--muted); margin-bottom: 26px; }
+
+  /* STATS CARDS */
+  .admin-stats { display: flex; gap: 18px; margin-bottom: 28px; flex-wrap: wrap; }
+  .stat-card { background: #fff; border-radius: 12px; padding: 20px 24px; flex: 1; min-width: 150px; border: 1px solid var(--border); }
+  .stat-card h3 { font-size: 1.8rem; font-weight: 800; color: var(--navy); }
+  .stat-card p { font-size: 0.78rem; color: var(--muted); margin-top: 3px; }
+
+  /* TABLE */
+  .table-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
+  .search-bar { display: flex; gap: 0; }
+  .search-bar input { padding: 9px 14px; border: 1.5px solid #d0d5e8; border-radius: 7px 0 0 7px; font-size: 0.83rem; outline: none; font-family: 'Poppins', sans-serif; width: 240px; }
+  .search-bar input:focus { border-color: var(--navy); }
+  .search-bar button { background: var(--light-bg); border: 1.5px solid #d0d5e8; border-left: none; padding: 9px 14px; border-radius: 0 7px 7px 0; cursor: pointer; font-size: 0.82rem; }
+  .btn-add { background: var(--green); color: #fff; border: none; padding: 10px 22px; border-radius: 7px; cursor: pointer; font-size: 0.85rem; font-weight: 600; font-family: 'Poppins', sans-serif; transition: background 0.2s; }
+  .btn-add:hover { background: #1e8449; }
+  .table-wrap { background: #fff; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 700px; }
+  thead th { background: var(--navy); color: #fff; padding: 13px 14px; text-align: left; font-weight: 600; font-size: 0.78rem; letter-spacing: 0.3px; }
+  tbody td { padding: 12px 14px; border-bottom: 1px solid #f0f2f8; vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: #f8f9ff; }
+  .cert-badge { background: #eef1fb; color: var(--navy); font-size: 0.75rem; font-weight: 600; padding: 3px 9px; border-radius: 5px; font-family: monospace; }
+  .btn-edit { background: var(--navy); color: #fff; border: none; padding: 5px 14px; border-radius: 5px; cursor: pointer; font-size: 0.75rem; font-family: 'Poppins', sans-serif; font-weight: 600; transition: background 0.2s; }
+  .btn-edit:hover { background: #16235a; }
+  .btn-del { background: var(--red); color: #fff; border: none; padding: 5px 14px; border-radius: 5px; cursor: pointer; font-size: 0.75rem; font-family: 'Poppins', sans-serif; font-weight: 600; margin-left: 6px; transition: background 0.2s; }
+  .btn-del:hover { background: #a93226; }
+  .empty-state { text-align: center; padding: 50px; color: var(--muted); }
+  .empty-state p { font-size: 0.88rem; margin-top: 8px; }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: #fff; border-radius: 16px; padding: 36px 32px; width: 500px; max-width: 95%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); animation: modal-in 0.18s ease; }
+  @keyframes modal-in { from{transform:scale(0.94);opacity:0} to{transform:scale(1);opacity:1} }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .modal h3 { font-size: 1.1rem; font-weight: 700; color: var(--navy); }
+  .modal-close { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--muted); line-height: 1; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; }
+  .btn-save { background: var(--navy); color: #fff; border: none; padding: 11px 28px; border-radius: 7px; cursor: pointer; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.88rem; transition: background 0.2s; }
+  .btn-save:hover { background: #16235a; }
+  .btn-save:disabled { background: #8898c4; cursor: not-allowed; }
+  .btn-cancel { background: #eef0f8; color: #555; border: none; padding: 11px 22px; border-radius: 7px; cursor: pointer; font-family: 'Poppins', sans-serif; font-weight: 500; font-size: 0.88rem; }
+  .btn-cancel:hover { background: #e0e3f0; }
+
+  /* ALERTS */
+  .alert { padding: 11px 16px; border-radius: 8px; font-size: 0.83rem; margin-bottom: 18px; font-weight: 500; }
+  .alert-success { background: #e8f5e9; color: #1b5e20; border: 1px solid #c8e6c9; }
+  .alert-error { background: #ffebee; color: #b71c1c; border: 1px solid #ffcdd2; }
+  .alert-info { background: #e3f2fd; color: #0d47a1; border: 1px solid #bbdefb; }
+
+  /* SPINNER */
+  .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 6px; }
+  @keyframes spin { to{transform:rotate(360deg)} }
+
+  @media(max-width:600px){
+    #panelWrap{padding:20px 16px}
+    .topbar{padding:12px 16px}
+    .login-card{padding:32px 24px}
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <div class="logo-ring"></div>
+    <div><h2>CodSoft</h2><span style="display:block;font-size:0.62rem;color:rgba(255,255,255,0.55)">Admin Panel</span></div>
+  </div>
+  <div class="topbar-right">
+    <a href="/" class="btn-home">← Back to Site</a>
+    <span class="topbar-user" id="topbarUser" style="display:none"></span>
+    <button class="btn-logout" id="logoutBtn" onclick="doLogout()" style="display:none">Logout</button>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginWrap">
+  <div class="login-card">
+    <div class="lock-icon">🔐</div>
+    <h2>Admin Login</h2>
+    <p>This area is restricted. Please sign in with your admin credentials.</p>
+    <div id="loginAlert"></div>
+    <div class="form-group"><label>Username</label><input type="text" id="adminUser" placeholder="Enter username" autocomplete="username"></div>
+    <div class="form-group"><label>Password</label><input type="password" id="adminPass" placeholder="Enter password" autocomplete="current-password" onkeypress="if(event.key==='Enter')doLogin()"></div>
+    <button class="btn-login" id="loginBtn" onclick="doLogin()">Sign In</button>
+  </div>
+</div>
+
+<!-- PANEL -->
+<div id="panelWrap">
+  <div class="panel-header">
+    <h2>📋 Certificate Management</h2>
+  </div>
+  <p class="panel-sub">Add, edit, or delete certificate records. All changes are saved to the database and are live immediately.</p>
+  <div id="panelAlert"></div>
+
+  <div class="admin-stats">
+    <div class="stat-card"><h3 id="statTotal">—</h3><p>Total Certificates</p></div>
+    <div class="stat-card"><h3 id="statFiltered">—</h3><p>Showing</p></div>
+  </div>
+
+  <div class="table-toolbar">
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search by name or cert no..." oninput="filterTable()">
+      <button onclick="filterTable()">🔍</button>
+    </div>
+    <button class="btn-add" onclick="openAddModal()">+ Add New Certificate</button>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Cert No</th>
+          <th>Student Name</th>
+          <th>Domain</th>
+          <th>Duration</th>
+          <th>Starting Date</th>
+          <th>Award Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="recordsBody">
+        <tr><td colspan="7" class="empty-state">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">Add Certificate</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <input type="hidden" id="editId">
+    <div class="form-group"><label>Certification No <span style="color:var(--red)">*</span></label><input type="text" id="editCertNo" placeholder="e.g. e695dbd"></div>
+    <div class="form-group"><label>Student Name <span style="color:var(--red)">*</span></label><input type="text" id="editName" placeholder="Full name of student"></div>
+    <div class="form-group"><label>Domain <span style="color:var(--red)">*</span></label><input type="text" id="editDomain" placeholder="e.g. Python Programming Internship"></div>
+    <div class="form-group"><label>Duration</label><input type="text" id="editDuration" placeholder="e.g. 4 weeks"></div>
+    <div class="form-group"><label>Starting Date</label><input type="text" id="editStart" placeholder="e.g. 05/Mar/2025"></div>
+    <div class="form-group"><label>Award Date</label><input type="text" id="editAward" placeholder="e.g. 05/Apr/2025"></div>
+    <div id="modalAlert"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" id="saveBtn" onclick="saveRecord()">Save Certificate</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let allCerts = [];
+
+// ─── CHECK SESSION ON LOAD ────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const res = await fetch('/api/admin/session');
+    const data = await res.json();
+    if (data.loggedIn) showPanel(data.username);
+  } catch {}
+});
+
+// ─── LOGIN ────────────────────────────────────────────────────
+async function doLogin() {
+  const username = document.getElementById('adminUser').value.trim();
+  const password = document.getElementById('adminPass').value;
+  const btn = document.getElementById('loginBtn');
+  if (!username || !password) {
+    setAlert('loginAlert', 'Please enter both username and password.', 'error');
+    return;
+  }
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Signing in...';
+  try {
+    const res = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      showPanel(data.username);
+    } else {
+      setAlert('loginAlert', data.error || 'Invalid credentials.', 'error');
+    }
+  } catch {
+    setAlert('loginAlert', 'Unable to connect. Please try again.', 'error');
+  }
+  btn.disabled = false;
+  btn.innerHTML = 'Sign In';
+}
+
+// ─── LOGOUT ───────────────────────────────────────────────────
+async function doLogout() {
+  await fetch('/api/admin/logout', { method: 'POST' });
+  document.getElementById('loginWrap').style.display = 'flex';
+  document.getElementById('panelWrap').style.display = 'none';
+  document.getElementById('topbarUser').style.display = 'none';
+  document.getElementById('logoutBtn').style.display = 'none';
+  document.getElementById('adminUser').value = '';
+  document.getElementById('adminPass').value = '';
+  document.getElementById('loginAlert').innerHTML = '';
+}
+
+// ─── SHOW PANEL ───────────────────────────────────────────────
+function showPanel(username) {
+  document.getElementById('loginWrap').style.display = 'none';
+  document.getElementById('panelWrap').style.display = 'block';
+  document.getElementById('topbarUser').style.display = 'inline';
+  document.getElementById('topbarUser').textContent = '👤 ' + username;
+  document.getElementById('logoutBtn').style.display = 'inline-block';
+  loadCertificates();
+}
+
+// ─── LOAD CERTIFICATES ────────────────────────────────────────
+async function loadCertificates() {
+  document.getElementById('recordsBody').innerHTML = '<tr><td colspan="7" class="empty-state"><div class="spinner" style="border-color:rgba(0,0,0,0.15);border-top-color:var(--navy)"></div> Loading...</td></tr>';
+  try {
+    const res = await fetch('/api/admin/certificates');
+    if (!res.ok) throw new Error();
+    allCerts = await res.json();
+    renderTable(allCerts);
+    document.getElementById('statTotal').textContent = allCerts.length;
+  } catch {
+    document.getElementById('recordsBody').innerHTML = '<tr><td colspan="7" class="empty-state">⚠️ Failed to load certificates.</td></tr>';
+  }
+}
+
+// ─── RENDER TABLE ─────────────────────────────────────────────
+function renderTable(certs) {
+  const tbody = document.getElementById('recordsBody');
+  document.getElementById('statFiltered').textContent = certs.length;
+  if (certs.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">📭 No certificates found.<p>Add your first certificate using the button above.</p></td></tr>';
+    return;
+  }
+  tbody.innerHTML = certs.map(c => `
+    <tr>
+      <td><span class="cert-badge">${esc(c.certNo)}</span></td>
+      <td>${esc(c.name)}</td>
+      <td>${esc(c.domain)}</td>
+      <td>${esc(c.duration)}</td>
+      <td>${esc(c.start)}</td>
+      <td>${esc(c.award)}</td>
+      <td>
+        <button class="btn-edit" onclick="openEditModal(${c.id})">Edit</button>
+        <button class="btn-del" onclick="deleteRecord(${c.id}, '${esc(c.name)}')">Delete</button>
+      </td>
+    </tr>`).join('');
+}
+
+function esc(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─── FILTER ───────────────────────────────────────────────────
+function filterTable() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const filtered = allCerts.filter(c =>
+    c.name.toLowerCase().includes(q) ||
+    c.certNo.toLowerCase().includes(q) ||
+    c.domain.toLowerCase().includes(q)
+  );
+  renderTable(filtered);
+}
+
+// ─── DELETE ───────────────────────────────────────────────────
+async function deleteRecord(id, name) {
+  if (!confirm(`Delete certificate for "${name}"?\nThis cannot be undone.`)) return;
+  try {
+    const res = await fetch(`/api/admin/certificates/${id}`, { method: 'DELETE' });
+    if (res.ok) {
+      allCerts = allCerts.filter(c => c.id !== id);
+      renderTable(allCerts);
+      document.getElementById('statTotal').textContent = allCerts.length;
+      setAlert('panelAlert', `Certificate deleted successfully.`, 'error');
+    } else throw new Error();
+  } catch {
+    setAlert('panelAlert', 'Failed to delete. Please try again.', 'error');
+  }
+}
+
+// ─── MODAL ────────────────────────────────────────────────────
+function openAddModal() {
+  document.getElementById('modalTitle').textContent = 'Add New Certificate';
+  document.getElementById('editId').value = '';
+  ['editCertNo','editName','editDomain','editDuration','editStart','editAward'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('modalAlert').innerHTML = '';
+  document.getElementById('editModal').classList.add('open');
+  document.getElementById('editCertNo').focus();
+}
+
+function openEditModal(id) {
+  const c = allCerts.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('modalTitle').textContent = 'Edit Certificate';
+  document.getElementById('editId').value = c.id;
+  document.getElementById('editCertNo').value = c.certNo;
+  document.getElementById('editName').value = c.name;
+  document.getElementById('editDomain').value = c.domain;
+  document.getElementById('editDuration').value = c.duration;
+  document.getElementById('editStart').value = c.start;
+  document.getElementById('editAward').value = c.award;
+  document.getElementById('modalAlert').innerHTML = '';
+  document.getElementById('editModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('editModal').classList.remove('open');
+}
+
+document.getElementById('editModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('editModal')) closeModal();
+});
+
+// ─── SAVE ─────────────────────────────────────────────────────
+async function saveRecord() {
+  const id = document.getElementById('editId').value;
+  const certNo = document.getElementById('editCertNo').value.trim();
+  const name = document.getElementById('editName').value.trim();
+  const domain = document.getElementById('editDomain').value.trim();
+  if (!certNo || !name || !domain) {
+    setAlert('modalAlert', 'Certification No, Student Name, and Domain are required.', 'error');
+    return;
+  }
+  const body = {
+    certNo, name, domain,
+    duration: document.getElementById('editDuration').value.trim(),
+    start: document.getElementById('editStart').value.trim(),
+    award: document.getElementById('editAward').value.trim()
+  };
+  const saveBtn = document.getElementById('saveBtn');
+  saveBtn.disabled = true;
+  saveBtn.innerHTML = '<span class="spinner"></span>Saving...';
+  try {
+    let res, data;
+    if (!id) {
+      res = await fetch('/api/admin/certificates', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    } else {
+      res = await fetch(`/api/admin/certificates/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    }
+    data = await res.json();
+    if (res.ok) {
+      closeModal();
+      await loadCertificates();
+      setAlert('panelAlert', id ? 'Certificate updated successfully!' : 'Certificate added successfully!', 'success');
+    } else {
+      setAlert('modalAlert', data.error || 'Save failed. Please try again.', 'error');
+    }
+  } catch {
+    setAlert('modalAlert', 'Network error. Please try again.', 'error');
+  }
+  saveBtn.disabled = false;
+  saveBtn.innerHTML = 'Save Certificate';
+}
+
+// ─── ALERTS ───────────────────────────────────────────────────
+function setAlert(id, msg, type) {
+  const el = document.getElementById(id);
+  el.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+  if (id !== 'modalAlert') setTimeout(() => el.innerHTML = '', 4000);
+}
+</script>
+</body>
+</html>
