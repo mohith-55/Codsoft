@@ -25,12 +25,9 @@
   }
   .topbar-logo { display: flex; align-items: center; gap: 10px; }
   .logo-ring {
-    width: 38px; height: 38px; border-radius: 50%;
-    background: conic-gradient(#c0392b 0deg, #2980b9 120deg, #8e44ad 240deg, #c0392b 360deg);
-    display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0;
+    width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0;
   }
-  .logo-ring::before { content:''; position:absolute; width:26px; height:26px; border-radius:50%; border:2px solid rgba(255,255,255,0.5); }
-  .logo-ring::after { content:''; position:absolute; width:10px; height:10px; background:#fff; border-radius:50%; }
+  .logo-img { width: 38px; height: 38px; border-radius: 50%; display: block; object-fit: contain; }
   .topbar-logo h2 { font-size: 1.1rem; font-weight: 700; color: #fff; }
   .topbar-logo span { font-size: 0.65rem; color: rgba(255,255,255,0.65); }
   .topbar-right { display: flex; align-items: center; gap: 14px; }
@@ -142,7 +139,7 @@
 <!-- TOP BAR -->
 <div class="topbar">
   <div class="topbar-logo">
-    <div class="logo-ring"></div>
+    <div class="logo-ring"><img src="/logo.svg" alt="CodSoft logo" class="logo-img"></div>
     <div><h2>CodSoft</h2><span style="display:block;font-size:0.62rem;color:rgba(255,255,255,0.55)">Admin Panel</span></div>
   </div>
   <div class="topbar-right">

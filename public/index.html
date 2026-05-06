@@ -29,12 +29,9 @@
   .logo { display: flex; align-items: center; gap: 10px; cursor: pointer; text-decoration: none; }
   .logo-ring {
     width: 46px; height: 46px; border-radius: 50%;
-    background: conic-gradient(#c0392b 0deg, #2980b9 120deg, #8e44ad 240deg, #c0392b 360deg);
-    display: flex; align-items: center; justify-content: center;
-    position: relative; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0;
   }
-  .logo-ring::before { content: ''; position: absolute; width: 32px; height: 32px; border-radius: 50%; border: 2.5px solid rgba(255,255,255,0.55); }
-  .logo-ring::after { content: ''; position: absolute; width: 13px; height: 13px; background: #fff; border-radius: 50%; }
+  .logo-img { width: 46px; height: 46px; border-radius: 50%; display: block; object-fit: contain; }
   .logo-text h2 { font-size: 1.25rem; font-weight: 700; color: var(--navy); line-height: 1.1; }
   .logo-text span { font-size: 0.68rem; color: var(--red); font-weight: 600; }
   nav ul { list-style: none; display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
@@ -225,7 +222,7 @@
 <!-- NAVBAR -->
 <nav>
   <a class="logo" onclick="showPage('home')" href="#">
-    <div class="logo-ring"></div>
+    <div class="logo-ring"><img src="/logo.svg" alt="CodSoft logo" class="logo-img"></div>
     <div class="logo-text"><h2>CodSoft</h2><span>Code.Create.Succeed</span></div>
   </a>
   <ul>
